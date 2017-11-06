@@ -7,8 +7,10 @@ namespace SlaveMarket\Lease;
  *
  * @package SlaveMarket\Lease
  */
-interface LeaseContractsRepository
+class LeaseContractsRepository
 {
+    private $storage = array();
+
     /**
      * Возвращает список договоров аренды для раба, в которых заняты часы из указанного периода
      *
@@ -17,5 +19,15 @@ interface LeaseContractsRepository
      * @param string $dateTo Y-m-d
      * @return LeaseContract[]
      */
-    public function getForSlave(int $slaveId, string $dateFrom, string $dateTo) : array;
+    public function getForSlave(int $slaveId, string $dateFrom, string $dateTo): array
+    {
+
+        return array();
+    }
+
+
+    public function loadItem(LeaseContract $item)
+    {
+        $this->storage [] = $item;
+    }
 }

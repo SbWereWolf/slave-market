@@ -2,8 +2,8 @@
 
 namespace SlaveMarket\Lease;
 
-use SlaveMarket\MastersRepository;
-use SlaveMarket\SlavesRepository;
+use SlaveMarket\IMastersRepository;
+use SlaveMarket\ISlavesRepository;
 
 /**
  * Операция "Арендовать раба"
@@ -18,12 +18,12 @@ class LeaseOperation
     protected $contractsRepository;
 
     /**
-     * @var MastersRepository
+     * @var IMastersRepository
      */
     protected $mastersRepository;
 
     /**
-     * @var SlavesRepository
+     * @var ISlavesRepository
      */
     protected $slavesRepository;
 
@@ -31,10 +31,10 @@ class LeaseOperation
      * LeaseOperation constructor.
      *
      * @param LeaseContractsRepository $contractsRepo
-     * @param MastersRepository $mastersRepo
-     * @param SlavesRepository $slavesRepo
+     * @param IMastersRepository $mastersRepo
+     * @param ISlavesRepository $slavesRepo
      */
-    public function __construct(LeaseContractsRepository $contractsRepo, MastersRepository $mastersRepo, SlavesRepository $slavesRepo)
+    public function __construct(LeaseContractsRepository $contractsRepo, IMastersRepository $mastersRepo, ISlavesRepository $slavesRepo)
     {
         $this->contractsRepository = $contractsRepo;
         $this->mastersRepository   = $mastersRepo;
@@ -49,6 +49,11 @@ class LeaseOperation
      */
     public function run(LeaseRequest $request): LeaseResponse
     {
+        $workerId = $request->slaveId;
+
+        foreach ($this->contractsRepository as $contract) {
+
+        }
         // Your code here :-)
     }
 }

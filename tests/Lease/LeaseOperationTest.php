@@ -25,6 +25,8 @@ class LeaseOperationTest extends TestCase
     {
         $mastersRepository = $this->prophesize(MastersRepository::class);
         foreach ($masters as $master) {
+
+            $mastersRepository->loadItem($master);
             $mastersRepository->getById($master->getId())->willReturn($master);
         }
 
@@ -41,6 +43,8 @@ class LeaseOperationTest extends TestCase
     {
         $slavesRepository = $this->prophesize(SlavesRepository::class);
         foreach ($slaves as $slave) {
+
+            $slavesRepository->loadItem($slave);
             $slavesRepository->getById($slave->getId())->willReturn($slave);
         }
 
@@ -73,6 +77,9 @@ class LeaseOperationTest extends TestCase
 
             // Stub репозитория договоров
             $contractsRepo = $this->prophesize(LeaseContractsRepository::class);
+
+            $contractsRepo->loadItem($leaseContract1);
+
             $contractsRepo
                 ->getForSlave($slave1->getId(), '2017-01-01', '2017-01-01')
                 ->willReturn([$leaseContract1]);
