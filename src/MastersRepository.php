@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: СЕРГЕЙ
- * Date: 06.11.2017
- * Time: 13:20
- */
 
 namespace SlaveMarket;
 
@@ -25,7 +19,8 @@ class MastersRepository implements IMastersRepository
         $storage = $this->storage;
         foreach ($storage as $item) {
 
-            $isMatch = $item->id == $id;
+            /* @var $item Master */
+            $isMatch = $item->getId() == $id;
             if ($isMatch) {
                 $value = $item;
                 break;

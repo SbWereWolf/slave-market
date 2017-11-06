@@ -1,6 +1,5 @@
 <?php
 
-// -- Arrange
 use SlaveMarket\Lease\LeaseContract;
 use SlaveMarket\Lease\LeaseContractsRepository;
 use SlaveMarket\Lease\LeaseHour;
@@ -13,6 +12,7 @@ use SlaveMarket\Slave;
 
 require __DIR__ . '/vendor/autoload.php';
 
+// -- Arrange
 {
     // Хозяева
     $master1 = new Master(1, 'Господин Боб');
