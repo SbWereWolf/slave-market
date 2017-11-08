@@ -57,7 +57,7 @@ class Master
      *
      * @return bool
      */
-    public function isVIP(): bool
+    public function getIsVip(): bool
     {
         return $this->isVIP;
     }

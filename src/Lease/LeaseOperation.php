@@ -16,7 +16,6 @@ use function rtrim;
  */
 class LeaseOperation
 {
-    const RECEIVE_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * @var LeaseContractsRepository
@@ -69,30 +68,29 @@ class LeaseOperation
         $this->response = new LeaseResponse();
 
         $isValid = $this->getLeaseAttributes($worker, $price, $tenant);
-        /* @var $worker Slave */
-        /* @var $tenant Master */
+        /* @var $worker ?Slave */
+        /* @var $tenant ?Master */
+        /* @var $price ?float */
 
-        $timeFrom = $this->request->timeFrom;
-        $timeTo = $this->request->timeTo;
-        $contracts = null;
+        $error = '';
         if ($isValid) {
-
-            $workerId = $worker->getId();
-            $contracts = $this->contractsRepository->getForSlave($workerId, $timeFrom, $timeTo);
+            $error = $this->testIntersection($worker, $tenant);
         }
 
-        $period = new LeasePeriod($timeFrom, $timeTo);
         $hasApproval = true;
-        $isExists = !empty($contracts);
-        if ($isExists) {
+        $isContain = !empty($error);
+        if ($isContain) {
 
             $hasApproval = false;
 
-            $this->addContractsHoursError($worker, $timeFrom, $timeTo, $contracts);
+            $this->addError($error);
         }
 
         if ($hasApproval) {
 
+            $timeFrom = $this->request->timeFrom;
+            $timeTo = $this->request->timeTo;
+            $period = new LeasePeriod($timeFrom, $timeTo);
             $leasedHours = $period->getLeaseHours();
 
             $hoursNumber = count($leasedHours);
@@ -107,12 +105,12 @@ class LeaseOperation
     }
 
     /**
-     * @param $worker
-     * @param $price
-     * @param $tenant
+     * @param $worker ?Slave
+     * @param $price ?float
+     * @param $tenant ?Master
      * @return bool
      */
-    private function getLeaseAttributes(&$worker, ?float &$price, &$tenant): bool
+    private function getLeaseAttributes(?Slave &$worker, ?float &$price, ?Master &$tenant): bool
     {
 
         $isSlaveValid = $this->getLeaseSlave($worker, $price);
@@ -135,9 +133,10 @@ class LeaseOperation
     }
 
     /**
-     * @param $bookedHours
+     * @param $bookedHours \DateTime[]
+     * @return string
      */
-    private function addHoursError($bookedHours)
+    private function formatHoursAsString($bookedHours): string
     {
         $isContain = !empty($bookedHours);
         if ($isContain) {
@@ -147,9 +146,9 @@ class LeaseOperation
                 /* @var $bookedHour \DateTime */
                 $hoursString .= $bookedHour->format(LeaseHour::HOUR_FORMAT) . ', ';
             }
-            rtrim($hoursString, ', ');
+            $hoursString = rtrim($hoursString, ', ');
 
-            $this->addError('Занятые часы ' . $hoursString);
+            return $hoursString;
         }
     }
 
@@ -207,23 +206,61 @@ class LeaseOperation
      * @param $timeFrom
      * @param $timeTo
      * @param $contracts
+     * @return string
      */
-    private function addContractsHoursError(Slave $worker, $timeFrom, $timeTo, $contracts)
+    private function testHoursIntersection(Slave $worker, $timeFrom, $timeTo, $contracts): string
     {
         $period = new LeasePeriod($timeFrom, $timeTo);
         $workerId = $worker->getId();
         $workerName = $worker->getName();
-        $this->addError("Раб #$workerId $workerName в период с $timeFrom по $timeTo уже сдан в аренду");
+        $errorMessage = "Раб #$workerId \"$workerName\" в период с \"$timeFrom\" по \"$timeTo\" имеет занятые часы.";
 
         foreach ($contracts as $contract) {
             /* @var $contract LeaseContract */
 
             $leasedHours = $contract->leasedHours;
 
-            $bookedHours = $period->getintersection($leasedHours);
+            $bookedHours = $period->getIntersection($leasedHours);
 
-            $this->addHoursError($bookedHours);
+            $hoursString = $this->formatHoursAsString($bookedHours);
+
+            $isContain = !empty($hoursString);
+            if ($isContain) {
+                $masterId = $contract->master->getId();
+                $masterName = $contract->master->getName();
+                $errorMessage .= "\nХозяин #$masterId \"$masterName\" часы : $hoursString";
+            }
+
         }
+
+        return $errorMessage;
+    }
+
+    /**
+     * @param $worker Slave
+     * @param $tenant
+     * @return string
+     * @internal param string $timeFrom
+     * @internal param string $timeTo
+     * @internal param $isValid
+     */
+    private function testIntersection(Slave $worker, Master $tenant): string
+    {
+        $contracts = null;
+        $workerId = $worker->getId();
+        $isVip = $tenant->getIsVip();
+        $timeFrom = $this->request->timeFrom;
+        $timeTo = $this->request->timeTo;
+
+        $contracts = $this->contractsRepository->getForSlave($workerId, $timeFrom, $timeTo, $isVip);
+
+        $isExists = !empty($contracts);
+        $error = '';
+        if ($isExists) {
+
+            $error = $this->testHoursIntersection($worker, $timeFrom, $timeTo, $contracts);
+        }
+        return $error;
     }
 
 }

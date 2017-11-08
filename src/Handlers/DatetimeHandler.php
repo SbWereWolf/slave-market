@@ -20,11 +20,10 @@ class DatetimeHandler
     }
 
     /**
-     * @param $increment
-     * @return false|int
-     * @internal param $timeFrom
+     * @param $increment int
+     * @return int
      */
-    public function specialRound($increment): int
+    public function specialRound(int $increment): int
     {
 
         $stampFrom = (floor(intdiv($this->stamp, self::SECONDS_IN_HOUR)) + $increment) * self::SECONDS_IN_HOUR;

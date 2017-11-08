@@ -35,12 +35,12 @@ class LeasePeriod
         $this->datetimeBegin = $datetimeFrom;
 
         $datetimeTo = new DateTime();
-        $datetimeFrom->setTimestamp($this->stampEnd);
+        $datetimeTo->setTimestamp($this->stampEnd);
         $this->datetimeEnd = $datetimeTo;
     }
 
     /**
-     * @return LeaseHour[]
+     * @return \SlaveMarket\Lease\LeaseHour[]
      */
     public function getLeaseHours(): array
     {
@@ -61,22 +61,35 @@ class LeasePeriod
     }
 
     /**
-     * @param $leasedHours \DateTime[]
-     * @return array
+     * @param $leasedHours \SlaveMarket\Lease\LeaseHour[]
+     * @return array|\DateTime[]
      */
-    public function getintersection($leasedHours): array
+    public function getIntersection($leasedHours): array
     {
         $datetimeFrom = $this->datetimeBegin;
         $datetimeTo = $this->datetimeEnd;
 
         $bookedHours = array();
         foreach ($leasedHours as $leasedHour) {
-            /* @var $leasedHour \DateTime */
-            $isConcurrent = $leasedHour >= $datetimeFrom && $leasedHour <= $datetimeTo;
+            /* @var $leasedHour \SlaveMarket\Lease\LeaseHour */
+            $datetimeValue = $leasedHour->getDateTime();
+            $isConcurrent = $datetimeValue >= $datetimeFrom && $datetimeValue < $datetimeTo;
             if ($isConcurrent) {
-                $bookedHours [] = $leasedHour;
+                $bookedHours [] = $datetimeValue;
             }
         }
         return $bookedHours;
+    }
+
+    public function getBegin(): \DateTime
+    {
+
+        return $this->datetimeBegin;
+    }
+
+    public function getEnd(): \DateTime
+    {
+
+        return $this->datetimeEnd;
     }
 }
