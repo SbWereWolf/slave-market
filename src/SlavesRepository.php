@@ -3,17 +3,16 @@
 namespace SlaveMarket;
 
 
-class SlavesRepository implements ISlavesRepository
+class SlavesRepository extends Repository implements ISlavesRepository
 {
-    private $storage = array();
 
     /**
      * Возвращает раба по его id
      *
      * @param int $id
-     * @return Slave
+     * @return ISlave
      */
-    public function getById(int $id): ?Slave
+    public function getById(int $id): ?ISlave
     {
         $value = null;
         $storage = $this->storage;
@@ -28,10 +27,5 @@ class SlavesRepository implements ISlavesRepository
         }
 
         return $value;
-    }
-
-    public function loadItem(Slave $item)
-    {
-        $this->storage [] = $item;
     }
 }

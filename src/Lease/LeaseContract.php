@@ -2,8 +2,8 @@
 
 namespace SlaveMarket\Lease;
 
-use SlaveMarket\Master;
-use SlaveMarket\Slave;
+use SlaveMarket\IMaster;
+use SlaveMarket\ISlave;
 
 /**
  * Договор аренды
@@ -12,10 +12,10 @@ use SlaveMarket\Slave;
  */
 class LeaseContract
 {
-    /** @var Master Хозяин */
+    /** @var IMaster Хозяин */
     public $master;
 
-    /** @var Slave Раб */
+    /** @var ISlave Раб */
     public $slave;
 
     /** @var float Стоимость */
@@ -24,7 +24,7 @@ class LeaseContract
     /** @var LeaseHour[] Список арендованных часов */
     public $leasedHours = [];
 
-    public function __construct(Master $master, Slave $slave, float $price, array $leasedHours)
+    public function __construct(IMaster $master, ISlave $slave, float $price, array $leasedHours)
     {
         $this->master      = $master;
         $this->slave       = $slave;

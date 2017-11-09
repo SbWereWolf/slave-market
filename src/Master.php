@@ -7,7 +7,7 @@ namespace SlaveMarket;
  *
  * @package SlaveMarket
  */
-class Master
+class Master implements IMaster
 {
     /** @var int id хозяина */
     protected $id;
@@ -16,20 +16,20 @@ class Master
     protected $name;
 
     /** @var bool является ли VIP-клиентом */
-    protected $isVIP;
+    protected $isVip;
 
     /**
      * Master constructor.
      *
      * @param int $id
      * @param string $name
-     * @param bool $isVIP
+     * @param bool $isVip
      */
-    public function __construct(int $id, string $name, bool $isVIP = false)
+    public function __construct(int $id, string $name, bool $isVip = false)
     {
         $this->id    = $id;
         $this->name  = $name;
-        $this->isVIP = $isVIP;
+        $this->isVip = $isVip;
     }
 
     /**
@@ -59,6 +59,6 @@ class Master
      */
     public function getIsVip(): bool
     {
-        return $this->isVIP;
+        return $this->isVip;
     }
 }

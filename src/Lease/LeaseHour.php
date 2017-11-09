@@ -9,9 +9,8 @@ use DateTime;
  *
  * @package SlaveMarket\Lease
  */
-class LeaseHour
+class LeaseHour implements ILeaseHour
 {
-    const HOUR_FORMAT = 'Y-m-d H';
     /**
      * Время начала часа
      *

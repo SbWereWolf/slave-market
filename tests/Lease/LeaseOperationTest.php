@@ -57,6 +57,7 @@ class LeaseOperationTest extends TestCase
      */
     public function test_periodIsBusy_failedWithOverlapInfo()
     {
+        date_default_timezone_set('UTC');
         // -- Arrange
         {
             // Хозяева
@@ -77,13 +78,8 @@ class LeaseOperationTest extends TestCase
             ]);
 
             // Stub репозитория договоров
-            $contractsRepo = $this->prophesize(LeaseContractsRepository::class);
-
+            $contractsRepo = new LeaseContractsRepository();
             $contractsRepo->loadItem($leaseContract1);
-
-            $contractsRepo
-                ->getForSlave($slave1->getId(), '2017-01-01 01:30:00', '2017-01-01 02:01:00', false)
-                ->willReturn([$leaseContract1]);
 
             // Запрос на новую аренду. 2й хозяин выбрал занятое время
             $leaseRequest           = new LeaseRequest();
@@ -93,7 +89,7 @@ class LeaseOperationTest extends TestCase
             $leaseRequest->timeTo   = '2017-01-01 02:01:00';
 
             // Операция аренды
-            $leaseOperation = new LeaseOperation($contractsRepo->reveal(), $masterRepo, $slaveRepo);
+            $leaseOperation = new LeaseOperation($contractsRepo, $masterRepo, $slaveRepo);
         }
 
         // -- Act
@@ -111,6 +107,8 @@ class LeaseOperationTest extends TestCase
      */
     public function test_periodIsBusyByVip_tenantVip_failedWithOverlapInfo()
     {
+        date_default_timezone_set('UTC');
+
         // -- Arrange
         {
             // Хозяева
@@ -131,13 +129,8 @@ class LeaseOperationTest extends TestCase
             ]);
 
             // Stub репозитория договоров
-            $contractsRepo = $this->prophesize(LeaseContractsRepository::class);
-
+            $contractsRepo = new LeaseContractsRepository();
             $contractsRepo->loadItem($leaseContract1);
-
-            $contractsRepo
-                ->getForSlave($slave1->getId(), '2017-01-01 01:30:00', '2017-01-01 02:01:00', true)
-                ->willReturn([$leaseContract1]);
 
             // Запрос на новую аренду. 2й хозяин выбрал занятое время
             $leaseRequest = new LeaseRequest();
@@ -147,7 +140,7 @@ class LeaseOperationTest extends TestCase
             $leaseRequest->timeTo = '2017-01-01 02:01:00';
 
             // Операция аренды
-            $leaseOperation = new LeaseOperation($contractsRepo->reveal(), $masterRepo, $slaveRepo);
+            $leaseOperation = new LeaseOperation($contractsRepo, $masterRepo, $slaveRepo);
         }
 
         // -- Act
@@ -165,6 +158,7 @@ class LeaseOperationTest extends TestCase
      */
     public function test_periodIsBusyByNoVip_tenantVip_successfullyLeased()
     {
+        date_default_timezone_set('UTC');
         // -- Arrange
         {
             // Хозяева
@@ -185,13 +179,9 @@ class LeaseOperationTest extends TestCase
             ]);
 
             // Stub репозитория договоров
-            $contractsRepo = $this->prophesize(LeaseContractsRepository::class);
-
+            $contractsRepo = new LeaseContractsRepository();
             $contractsRepo->loadItem($leaseContract1);
 
-            $contractsRepo
-                ->getForSlave($slave1->getId(), '2017-01-01 01:30:00', '2017-01-01 02:01:00', true)
-                ->willReturn([]);
 
             // Запрос на новую аренду. 2й хозяин выбрал занятое время
             $leaseRequest = new LeaseRequest();
@@ -201,7 +191,7 @@ class LeaseOperationTest extends TestCase
             $leaseRequest->timeTo = '2017-01-01 02:01:00';
 
             // Операция аренды
-            $leaseOperation = new LeaseOperation($contractsRepo->reveal(), $masterRepo, $slaveRepo);
+            $leaseOperation = new LeaseOperation($contractsRepo, $masterRepo, $slaveRepo);
         }
 
         // -- Act
@@ -218,6 +208,7 @@ class LeaseOperationTest extends TestCase
      */
     public function test_periodIsBusyByVip_tenantNoVip_failedWithOverlapInfo()
     {
+        date_default_timezone_set('UTC');
         // -- Arrange
         {
             // Хозяева
@@ -238,13 +229,8 @@ class LeaseOperationTest extends TestCase
             ]);
 
             // Stub репозитория договоров
-            $contractsRepo = $this->prophesize(LeaseContractsRepository::class);
-
+            $contractsRepo = new LeaseContractsRepository();
             $contractsRepo->loadItem($leaseContract1);
-
-            $contractsRepo
-                ->getForSlave($slave1->getId(), '2017-01-01 01:30:00', '2017-01-01 02:01:00', false)
-                ->willReturn([$leaseContract1]);
 
             // Запрос на новую аренду. 2й хозяин выбрал занятое время
             $leaseRequest = new LeaseRequest();
@@ -254,7 +240,7 @@ class LeaseOperationTest extends TestCase
             $leaseRequest->timeTo = '2017-01-01 02:01:00';
 
             // Операция аренды
-            $leaseOperation = new LeaseOperation($contractsRepo->reveal(), $masterRepo, $slaveRepo);
+            $leaseOperation = new LeaseOperation($contractsRepo, $masterRepo, $slaveRepo);
         }
 
         // -- Act
@@ -272,6 +258,7 @@ class LeaseOperationTest extends TestCase
      */
     public function test_idleSlave_successfullyLeased ()
     {
+        date_default_timezone_set('UTC');
         // -- Arrange
         {
             // Хозяева
@@ -282,10 +269,7 @@ class LeaseOperationTest extends TestCase
             $slave1    = new Slave(1, 'Уродливый Фред', 20);
             $slaveRepo = $this->makeFakeSlaveRepository($slave1);
 
-            $contractsRepo = $this->prophesize(LeaseContractsRepository::class);
-            $contractsRepo
-                ->getForSlave($slave1->getId(), '2017-01-01 01:30:00', '2017-01-01 02:01:00', false)
-                ->willReturn([]);
+            $contractsRepo = new LeaseContractsRepository();
 
             // Запрос на новую аренду
             $leaseRequest           = new LeaseRequest();
@@ -295,7 +279,7 @@ class LeaseOperationTest extends TestCase
             $leaseRequest->timeTo   = '2017-01-01 02:01:00';
 
             // Операция аренды
-            $leaseOperation = new LeaseOperation($contractsRepo->reveal(), $masterRepo, $slaveRepo);
+            $leaseOperation = new LeaseOperation($contractsRepo, $masterRepo, $slaveRepo);
         }
 
         // -- Act
@@ -305,5 +289,43 @@ class LeaseOperationTest extends TestCase
         $this->assertEmpty($response->getErrors());
         $this->assertInstanceOf(LeaseContract::class, $response->getLeaseContract());
         $this->assertEquals(40, $response->getLeaseContract()->price);
+    }
+
+    /**
+     * Если раб бездельничает, то его легко можно арендовать на несколько дней
+     */
+    public function test_idleSlave_successfullyLeased_forDay()
+    {
+        date_default_timezone_set('UTC');
+        // -- Arrange
+        {
+            // Хозяева
+            $master1 = new Master(1, 'Господин Боб');
+            $masterRepo = $this->makeFakeMasterRepository($master1);
+
+            // Раб
+            $slave1 = new Slave(1, 'Уродливый Фред', 20);
+            $slaveRepo = $this->makeFakeSlaveRepository($slave1);
+
+            $contractsRepo = new LeaseContractsRepository();
+
+            // Запрос на новую аренду
+            $leaseRequest = new LeaseRequest();
+            $leaseRequest->masterId = $master1->getId();
+            $leaseRequest->slaveId = $slave1->getId();
+            $leaseRequest->timeFrom = '2017-01-01 01:30:00';
+            $leaseRequest->timeTo = '2017-01-03 02:01:00';
+
+            // Операция аренды
+            $leaseOperation = new LeaseOperation($contractsRepo, $masterRepo, $slaveRepo);
+        }
+
+        // -- Act
+        $response = $leaseOperation->run($leaseRequest);
+
+        // -- Assert
+        $this->assertEmpty($response->getErrors());
+        $this->assertInstanceOf(LeaseContract::class, $response->getLeaseContract());
+        $this->assertEquals(700, $response->getLeaseContract()->price);
     }
 }

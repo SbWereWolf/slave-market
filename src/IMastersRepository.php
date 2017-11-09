@@ -13,9 +13,7 @@ interface IMastersRepository
      * Возвращает хозяина по его id
      *
      * @param int $id
-     * @return Master
+     * @return IMaster
      */
-    public function getById(int $id) : ?Master;
-
-    public function loadItem(Master $item);
+    public function getById(int $id) : ?IMaster;
 }

@@ -7,7 +7,7 @@ namespace SlaveMarket;
  *
  * @package SlaveMarket
  */
-class Slave
+class Slave implements ISlave
 {
     /** @var int id раба */
     protected $id;

@@ -8,15 +8,14 @@
 namespace SlaveMarket\Handlers;
 
 
-class DatetimeHandler
+class DatetimeHandler implements IDatetimeHandler
 {
-    const SECONDS_IN_HOUR = 3600;
 
     private $stamp = 0;
 
-    function __construct($timeFrom)
+    function __construct(\DateTime $datetime)
     {
-        $this->stamp = strtotime($timeFrom);
+        $this->stamp = $datetime->getTimestamp();
     }
 
     /**

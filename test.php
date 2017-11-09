@@ -13,6 +13,8 @@ use SlaveMarket\SlavesRepository;
 
 require __DIR__ . '/vendor/autoload.php';
 
+date_default_timezone_set('UTC');
+
 /**
  * Если раб занят не випом, то вип его легко может арендовать
  */
@@ -58,7 +60,8 @@ function test_periodIsBusyByNoVip_tenantVip_successfullyLeased()
 
     // -- Act
     $response = $leaseOperation->run($leaseRequest);
-    null;
+
+    var_export($response);
 }
 
 test_periodIsBusyByNoVip_tenantVip_successfullyLeased();

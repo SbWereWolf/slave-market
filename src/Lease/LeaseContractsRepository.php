@@ -2,31 +2,30 @@
 
 namespace SlaveMarket\Lease;
 
+use DateTime;
+use SlaveMarket\Repository;
+
 /**
  * Репозиторий договоров аренды
  *
  * @package SlaveMarket\Lease
  */
-class LeaseContractsRepository
+class LeaseContractsRepository extends Repository implements ILeaseContractsRepository
 {
-    const RECEIVE_FORMAT = 'Y-m-d H:i:s';
-
-    private $storage = array();
 
     /**
      * Возвращает список договоров аренды для раба, в которых заняты часы из указанного периода
      *
      * @param int $slaveId
-     * @param string $dateFrom Y-m-d H:i:s
-     * @param string $dateTo Y-m-d H:i:s
+     * @param string $dateStringFrom Y-m-d H:i:s
+     * @param string $dateStringTo Y-m-d H:i:s
      * @param bool $getOnlyVip
      * @return array|LeaseContract[]
      */
-    public function getForSlave(int $slaveId, string $dateFrom, string $dateTo, bool $getOnlyVip): array
+    public function getForSlave(int $slaveId, string $dateStringFrom, string $dateStringTo, bool $getOnlyVip): array
     {
-        $period = new LeasePeriod($dateFrom, $dateTo);
-        $datetimeFrom = $period->getBegin();
-        $datetimeTo = $period->getEnd();
+        $datetimeFrom = new DateTime($dateStringFrom);
+        $datetimeTo = new DateTime($dateStringTo);
 
         $haul = array();
         $storage = $this->storage;
@@ -55,12 +54,6 @@ class LeaseContractsRepository
 
         }
         return $haul;
-    }
-
-
-    public function loadItem(LeaseContract $item)
-    {
-        $this->storage [] = $item;
     }
 
     /**

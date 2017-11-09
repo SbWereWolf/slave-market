@@ -9,6 +9,9 @@ namespace SlaveMarket\Lease;
  */
 class LeaseRequest
 {
+
+    const RECEIVE_FORMAT = 'Y-m-d H:i:s';
+
     /** @var int id хозяина */
     public $masterId;
 

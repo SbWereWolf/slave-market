@@ -7,51 +7,34 @@ namespace SlaveMarket\Lease;
  *
  * @package SlaveMarket\Lease
  */
-class LeaseResponse implements ILeaseResponse
+interface ILeaseResponse
 {
-    /** @var LeaseContract договор аренды */
-    protected $leaseContract;
-
-    /** @var string[] список ошибок */
-    protected $errors = [];
 
     /**
      * Возвращает договор аренды, если аренда была успешной
      *
      * @return LeaseContract
      */
-    public function getLeaseContract(): ?LeaseContract
-    {
-        return $this->leaseContract;
-    }
+    public function getLeaseContract(): ?LeaseContract;
 
     /**
      * Указать договор аренды
      *
      * @param LeaseContract $leaseContract
      */
-    public function setLeaseContract(LeaseContract $leaseContract)
-    {
-        $this->leaseContract = $leaseContract;
-    }
+    public function setLeaseContract(LeaseContract $leaseContract);
 
     /**
      * Сообщить об ошибке
      *
      * @param string $message
      */
-    public function addError(string $message)
-    {
-        $this->errors[] = $message;
-    }
+    public function addError(string $message);
 
     /**
      * Возвращает все ошибки в процессе аренды
      *
      * @return string[]
      */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
+    public function getErrors(): array;
 }

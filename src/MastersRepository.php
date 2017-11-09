@@ -3,17 +3,16 @@
 namespace SlaveMarket;
 
 
-class MastersRepository implements IMastersRepository
+class MastersRepository extends Repository implements IMastersRepository
 {
-    private $storage = array();
 
     /**
      * Возвращает хозяина по его id
      *
      * @param int $id
-     * @return Master
+     * @return IMaster
      */
-    public function getById(int $id): ?Master
+    public function getById(int $id): ?IMaster
     {
         $value = null;
         $storage = $this->storage;
@@ -28,10 +27,5 @@ class MastersRepository implements IMastersRepository
         }
 
         return $value;
-    }
-
-    public function loadItem(Master $item)
-    {
-        $this->storage [] = $item;
     }
 }

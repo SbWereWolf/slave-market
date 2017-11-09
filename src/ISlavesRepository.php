@@ -13,9 +13,7 @@ interface ISlavesRepository
      * Возвращает раба по его id
      *
      * @param int $id
-     * @return Slave
+     * @return ISlave
      */
-    public function getById(int $id): ?Slave;
-
-    public function loadItem(Slave $item);
+    public function getById(int $id): ?ISlave;
 }

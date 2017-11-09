@@ -10,19 +10,20 @@ namespace SlaveMarket\Lease;
 
 use DateTime;
 use SlaveMarket\Handlers\DatetimeHandler;
+use SlaveMarket\Handlers\IDatetimeHandler;
 
-class LeasePeriod
+class LeasePeriod implements ILeasePeriod
 {
     private $stampBegin = 0;
     private $stampEnd = 0;
 
-    /* @var $datetimeBegin ?DateTime */
-    private $datetimeBegin = null;
+    /* @var $datetimeBegin DateTime */
+    private $datetimeBegin;
 
-    /* @var $datetimeEnd ?DateTime */
-    private $datetimeEnd = null;
+    /* @var $datetimeEnd DateTime */
+    private $datetimeEnd;
 
-    function __construct(string $timeFrom, string $timeTo)
+    function __construct(\DateTime $timeFrom, \DateTime $timeTo)
     {
         $handler = new DatetimeHandler($timeFrom);
         $this->stampBegin = $handler->specialRound(0);
@@ -50,12 +51,12 @@ class LeasePeriod
         $leasedHours = array();
         while ($currentHour < $stampTo) {
 
-            $timeString = date(LeaseHour::HOUR_FORMAT, $currentHour);
+            $timeString = date(ILeaseHour::HOUR_FORMAT, $currentHour);
             $leaseHour = new LeaseHour($timeString);
 
             $leasedHours[] = $leaseHour;
 
-            $currentHour += DatetimeHandler::SECONDS_IN_HOUR;
+            $currentHour += IDatetimeHandler::SECONDS_IN_HOUR;
         }
         return $leasedHours;
     }
@@ -64,7 +65,7 @@ class LeasePeriod
      * @param $leasedHours \SlaveMarket\Lease\LeaseHour[]
      * @return array|\DateTime[]
      */
-    public function getIntersection($leasedHours): array
+    public function getIntersection(array $leasedHours): array
     {
         $datetimeFrom = $this->datetimeBegin;
         $datetimeTo = $this->datetimeEnd;
